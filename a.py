@@ -22,7 +22,6 @@ print ("\n--------- Welcome To Hotel ---------")
 
 print ("___________________________________________")
 
-
 current_user = None
 
 def login():
@@ -42,6 +41,7 @@ def login():
     else:
         print("\nInvalid username or password.")
         return False
+
 
 def register():
 
@@ -67,6 +67,53 @@ def register():
     else:
         print("\nYou are not authorized to register new users.")
     
+def view_users():
+    sql = "SELECT * FROM users"
+    mycursor.execute(sql)
+    result = mycursor.fetchall()
+    for row in result:
+        print(row)
+    
+def delete_user():
+    username = input("\nEnter username of user to delete: ")
+    sql = "DELETE FROM users WHERE username = %s"
+    val = (username,)
+    mycursor.execute(sql, val)
+    mydb.commit()
+    print("\nUser deleted successfully.")
+
+def find_customer():
+
+    searchby=input("Search Customer By \n1.Name \n2.Phone_No. \n3. Check_IN_Date ")
+
+    if searchby == "1":
+        name = input("Enter Name: ")
+        sql = "SELECT * FROM customers WHERE name = %s"
+        val = (name,)
+        mycursor.execute(sql, val)
+        result = mycursor.fetchall()
+        for row in result:
+            print(row)
+
+    elif searchby == "2":
+        phone_no = input("Enter Phone No.: ")
+        sql = "SELECT * FROM customers WHERE phone_no = %s"
+        val = (phone_no,)
+        mycursor.execute(sql, val)
+        result = mycursor.fetchall()
+        for row in result:
+            print(row)
+
+    elif searchby == "3":
+        check_in_date = input("Enter Check In Date (YYYY-MM-DD) : ")
+        sql = "SELECT * FROM customers WHERE check_in_date = %s"
+        val = (check_in_date,)
+        mycursor.execute(sql, val)
+        result = mycursor.fetchall()
+        for row in result:
+            print(row)
+    else:
+        print("\nInvalid choice.")
 
 def add_room():
     room_no = int(input("Enter Room Number: "))
@@ -85,6 +132,7 @@ def add_room():
     
     mydb.commit()
     print("\n--------- Room added successfully ---------")
+
 
 def check_in():
     customer_name = input("Enter Customer's Name: ")
@@ -109,6 +157,7 @@ def check_in():
     
     mydb.commit()
     print("\n--------- Customer checked in successfully ---------")
+
 
 def check_out():
     room_no = int(input("Enter Room Number: "))
@@ -159,7 +208,6 @@ def show_available_rooms():
         print("\n--------- No rooms available ---------")
         
 
-
 def show_occupied_rooms():
     sql = "SELECT * FROM rooms WHERE room_status='Occupied'"
     mycursor.execute(sql)
@@ -175,13 +223,12 @@ def show_occupied_rooms():
         print("\n--------- No rooms found ---------")
 
 
-
 while True:
 
     if login():
         while True: 
 
-            choice = input("\nChoose an option:\n1. Register Staff \n2. Add Room\n3. Check In\n4. Check Out\n5. Show Available Rooms\n6. Show Occupied Rooms\n7. Quit\n\n")
+            choice = input("\nChoose an option:\n1. Register Staff \n2. Add Room\n3. Check In\n4. Check Out\n5. Show Available Rooms\n6. Show Occupied Rooms\n7. Find Customer \n8. View All Users\n9. Delete a user\n10. End\n\n")
 
             if choice == "1":
                 register()
@@ -202,9 +249,16 @@ while True:
                 show_occupied_rooms()
 
             elif choice == '7':
+                find_customer()
+
+            elif choice == '8':
+                view_users()
+
+            elif choice == '9':
+                delete_user()
+
+            elif choice == '10':
                 break
 
             else:
                  print("--------- Invalid choice ---------")
-
-
