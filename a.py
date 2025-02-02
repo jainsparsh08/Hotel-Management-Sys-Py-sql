@@ -18,11 +18,9 @@ else:
 
 print ("___________________________________________")
 
-
 print ("\n--------- Welcome To Hotel ---------")
 
 print ("___________________________________________")
-
 
 
 current_user = None
@@ -44,6 +42,31 @@ def login():
     else:
         print("\nInvalid username or password.")
         return False
+
+def register():
+
+
+    sql = "SELECT ROLE FROM users WHERE username = %s"
+    val = (current_user,)
+    mycursor.execute(sql, val)
+    result = mycursor.fetchone()
+    
+
+    if result  == ('admin',) :
+        uid = input("\nEnter NEW ID: ")
+        username = input("\nCreate new username : ")
+        password = input("\nCreate new password : ")
+        role= input("\nEnter role of the user : ")
+
+        sql = "INSERT INTO users (id, username, password. role) VALUES (%s,%s,%s,%s)"
+        val = (uid, username, password, role)
+        mycursor.execute(sql, val)
+        mydb.commit()
+        print("\nRegistration successful!")
+
+    else:
+        print("\nYou are not authorized to register new users.")
+    
 
 def add_room():
     room_no = int(input("Enter Room Number: "))
@@ -158,24 +181,27 @@ while True:
     if login():
         while True: 
 
-            choice = input("\nChoose an option:\n1. Add Room\n2. Check In\n3. Check Out\n4. Show Available Rooms\n5. Show Occupied Rooms\n6. Quit\n\n")
+            choice = input("\nChoose an option:\n1. Register Staff \n2. Add Room\n3. Check In\n4. Check Out\n5. Show Available Rooms\n6. Show Occupied Rooms\n7. Quit\n\n")
 
-            if choice == '1':
-                add_room()
+            if choice == "1":
+                register()
 
             elif choice == '2':
-                check_in()
+                add_room()
 
             elif choice == '3':
-                check_out()
+                check_in()
 
             elif choice == '4':
-                show_available_rooms()
+                check_out()
 
             elif choice == '5':
-                show_occupied_rooms()
+                show_available_rooms()
 
             elif choice == '6':
+                show_occupied_rooms()
+
+            elif choice == '7':
                 break
 
             else:
