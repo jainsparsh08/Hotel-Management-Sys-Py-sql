@@ -9,6 +9,7 @@ mydb = mysql.connector.connect(
     auth_plugin='mysql_native_password'
 )
 
+mycursor = mydb.cursor()
 
 if mydb.is_connected():
     print("\nThe connection to server was successful. ")
@@ -22,7 +23,7 @@ print ("\n--------- Welcome To Hotel ---------")
 
 print ("___________________________________________")
 
-mycursor = mydb.cursor()
+
 
 current_user = None
 
@@ -38,7 +39,7 @@ def login():
     
     if result:
         current_user = username
-        print(f"\nWelcome, {current_user}!")
+        print(f"\nWelcome, {current_user} !")
         return True
     else:
         print("\nInvalid username or password.")
@@ -129,8 +130,8 @@ def show_available_rooms():
     if result:
         print("Room Details:")
         for row in result:
-            room_no, room_type, room_price, room_status = row
-            print("Room No:", room_no, ", Room Type:", room_type, ", Room Price:", room_price, ", Room Status:", room_status)
+            room_no, room_type, room_price, room_status, modified_by= row
+            print("Room No:", room_no, "|| Room Type:", room_type, "|| Room Price:", room_price, "|| Room Status:", room_status,"||")
     else:
         print("\n--------- No rooms available ---------")
         
@@ -144,8 +145,8 @@ def show_occupied_rooms():
     if result:
         print("Room Details:")
         for row in result:
-            room_no, room_type, room_price, room_status = row
-            print("Room No:", room_no, ", Room Type:", room_type, ", Room Price:", room_price, ", Room Status:", room_status)
+            room_no, room_type, room_price, room_status, modified_by = row
+            print("Room No:", room_no, "|| Room Type:", room_type, "|| Room Price:", room_price, "|| Room Status:", room_status,"||")
 
     else:
         print("\n--------- No rooms found ---------")
@@ -157,7 +158,7 @@ while True:
     if login():
         while True: 
 
-            choice = input("\nChoose an option:\n1. Add Room\n2. Check In\n3. Check Out\n4. Show Available Rooms\n5. Show Occupied Rooms\n6. Quit\n")
+            choice = input("\nChoose an option:\n1. Add Room\n2. Check In\n3. Check Out\n4. Show Available Rooms\n5. Show Occupied Rooms\n6. Quit\n\n")
 
             if choice == '1':
                 add_room()
