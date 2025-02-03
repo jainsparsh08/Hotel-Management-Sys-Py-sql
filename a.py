@@ -22,16 +22,17 @@ print("___________________________________________")
 
 current_user = None
 
-# Function to log user activity with exact date and time
+
 def log_activity(username, action, details):
-    current_time = d.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Format for exact date and time
+    current_time = d.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sql = "INSERT INTO user_activity_log (username, action, action_time, details) VALUES (%s, %s, %s, %s)"
     val = (username, action, current_time, details)
     mycursor.execute(sql, val)
     mydb.commit()
 
 def find_customer():
-    searchby = input("Search Customer By \n1. Name \n2. Phone_No. \n3. Check_IN_Date \nEnter Your Choice:  ")
+    searchby = input("Search Customer By \n1. Name \n2. Phone_No. \n3. Check_IN_Date \nEnter Your Choice: \n ")
+
 
     if searchby == "1":
         name = input("Enter Name: ")
@@ -100,7 +101,7 @@ def register():
     mycursor.execute(sql, val)
     result = mycursor.fetchone()
     
-    if result == 'admin':
+    if result and result[0] == 'admin':
         uid = input("\nEnter NEW ID: ")
         username = input("\nCreate new username : ")
         password = input("\nCreate new password : ")
@@ -125,9 +126,9 @@ def view_users():
     mycursor.execute(sql, val)
     result = mycursor.fetchone()
     
-    if result == 'admin':
+    if result and result[0] == 'admin':
 
-        sql = "SELECT id, username, roll FROM users"
+        sql = "SELECT id, username, role FROM users"
         mycursor.execute(sql)
         result = mycursor.fetchall()
         for row in result:
@@ -146,7 +147,7 @@ def delete_user():
     mycursor.execute(sql, val)
     result = mycursor.fetchone()
     
-    if result == 'admin':
+    if result and result[0] == 'admin':
 
         username = input("\nEnter username of user to delete: ")
         sql = "DELETE FROM users WHERE username = %s"
@@ -158,7 +159,6 @@ def delete_user():
     else:
         print("\nYou are not authorized to delete users.")
     
-    # Log the delete action
     log_activity(current_user, "Deleted a user", f"User  with username: {username} deleted.")
 
 # Function to add a room
@@ -175,6 +175,7 @@ def add_room():
     if current_user:
         sql = "UPDATE rooms SET modified_by = %s WHERE room_no = %s"
         mycursor.execute(sql, (current_user, room_no))
+
     
     mydb.commit()
     print("\n--------- Room added successfully ---------")
@@ -286,18 +287,25 @@ def show_occupied_rooms():
     else:
         print("\n--------- No rooms found ---------")
 
-    # Log the action
     log_activity(current_user, "Viewed occupied rooms", "User  viewed occupied rooms.")
 
 def log():
-    print("\n--------- Room Management System Log ---------")
-    sql = "SELECT * FROM logs ORDER BY log_id DESC "
-    mycursor.execute(sql)
-    result = mycursor.fetchall()
-    for row in result:
-        log_id, user_id, activity, description = row
+    sql = "SELECT ROLE FROM users WHERE username = %s"
+    val = (current_user,)
+    mycursor.execute(sql, val)
+    result = mycursor.fetchone()
+    
+    if result and result[0] == 'admin':
 
-        print(row)
+        print("\n--------- Room Management System Log ---------")
+        sql = "SELECT * FROM user_activity_log ORDER BY activity_id DESC "
+        mycursor.execute(sql)
+        result = mycursor.fetchall()
+        for row in result:
+            print(row)
+
+    else :
+        print("Access Denied contact admin ")
 
 # Main menu loop
 while True:
@@ -337,7 +345,7 @@ while True:
 
             elif choice == '11':
                 log_activity(current_user, "Logged Out", "User  logged out successfully.")
-                break  # Exiting the loop
+                break  
 
             elif choice == '12':
                 log_activity(current_user, "closed program", "User  closed program successfully.")
