@@ -45,7 +45,6 @@ def login():
 
 def register():
 
-
     sql = "SELECT ROLE FROM users WHERE username = %s"
     val = (current_user,)
     mycursor.execute(sql, val)
@@ -92,8 +91,13 @@ def find_customer():
         val = (name,)
         mycursor.execute(sql, val)
         result = mycursor.fetchall()
+
+        print("Customer Data Found")
+        
         for row in result:
             print(row)
+
+
 
     elif searchby == "2":
         phone_no = input("Enter Phone No.: ")
