@@ -17,7 +17,7 @@ else:
     print("\nError! Server not connected.")
 
 print("___________________________________________")
-print("\n--------- Welcome To Hotel ---------")
+print("\n------------ Welcome To Hotel ------------")
 print("___________________________________________")
 
 current_user = None
@@ -149,17 +149,18 @@ def delete_user():
     
     if result and result[0] == 'admin':
 
-        username = input("\nEnter username of user to delete: ")
+        name = input("\nEnter username of user to delete: ")
         sql = "DELETE FROM users WHERE username = %s"
-        val = (username,)
+        val = (name,)
         mycursor.execute(sql, val)
         mydb.commit()
         print("\nUser  deleted successfully.")
 
+        log_activity(current_user, "Deleted a user", f"User  with username: {name} deleted.")
+
     else:
         print("\nYou are not authorized to delete users.")
     
-    log_activity(current_user, "Deleted a user", f"User  with username: {username} deleted.")
 
 # Function to add a room
 def add_room():
@@ -239,18 +240,18 @@ def check_out():
 
         days_stayed = (out_date - in_date).days
         
-        total_bill = room_price * days_stayed
+        bill_amount = room_price * days_stayed
         
-        sql = "UPDATE customers SET check_out_date = %s, total_bill = %s, modified_by = %s WHERE room_no = %s"
-        val = (check_out_date, total_bill, current_user, room_no)
-        mycursor.execute(sql, val)
+        sql = "UPDATE customers SET check_out_date = %s, bill_amount = %s, modified_by = %s WHERE room_no = %s"
+        val = (check_out_date, bill_amount, current_user, room_no)
+        mycursor.execute(sql, val)  
 
         sql = "UPDATE rooms SET room_status = %s WHERE room_no = %s"
         val = ("Available", room_no)
         mycursor.execute(sql, val)
         
         mydb.commit()
-        print(f"\n--------- Customer checked out successfully. Customer name : {name} || Check in date : {check_in_date} || Check_out_date : {check_out_date} || Days Stayed : {days_stayed} || Total bill: {total_bill} ---------")
+        print(f"\n--------- Customer checked out successfully. Customer name : {name} || Check in date : {check_in_date} || Check_out_date : {check_out_date} || Days Stayed : {days_stayed} || Total bill: {bill_amount} ---------")
         
         log_activity(current_user, "Checked out a customer", f"Customer: {name}, Room No: {room_no}")
         
